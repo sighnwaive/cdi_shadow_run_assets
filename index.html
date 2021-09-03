@@ -193,7 +193,9 @@
           $('logout').css('display:block');
           $('logout').css('display:block');
           getJobs();
-          getJobsRunner = setInterval(getJobs, 1000 * 10);
+          getJobsRunner = setInterval(() => {
+            getJobs()
+          }, 1000 * 10);
         } else {
           $('logout').css('display:block');
           $('logout').css('display:block');
@@ -209,7 +211,7 @@
       function getJobs() {
         gapi.client.sheets.spreadsheets.values.get({
           spreadsheetId: '1daEfsKHrRUkH5Wh3dCQKpArHIoivZHyC8RolPgr8ANs',
-          range: 'Class Data!A2:E',
+          range: 'Jobs!A2:E',
         }).then(function(response) {
           console.log(response);
           var range = response.result;
