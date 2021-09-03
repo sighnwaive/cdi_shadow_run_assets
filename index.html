@@ -46,10 +46,10 @@
         font-size: 72px;
         border-top: 4px solid #f9c80e;
         border-left: 4px solid #f9c80e;
-        border-top-left-radius: 50px;
+        border-top-left-radius: 500px;
         border-bottom: 4px solid #d842cb;
         border-right: 4px solid #d842cb;
-        border-bottom-right-radius: 50px;
+        border-bottom-right-radius: 500px;
         
       }
       .grid {
@@ -169,6 +169,8 @@
       var SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly";
 
       var getJobsRunner;
+      
+      const activeEntries = [];
 
       function handleClientLoad() {
         gapi.load('client:auth2', initClient);
@@ -218,7 +220,6 @@
           if (range.values.length > 0) {
             range.values.forEach((row) => {
               const entry = {};
-              entry.id = uuid();
               entry.description = row[0];
               entry.code = row[1];
               entry.reward = row[2];
@@ -235,24 +236,28 @@
       }
 
       function addEntry(entry) {
-        const removeButton = $(`<input type="button" class=" ${entry.id}" id="remove" value="-"/>`).click(() => {
-          $(`.${entry.id}`).remove();
-        });
-        const row = $(`<div class="row"></div>`);
-        row.append(`
-          <div class="cell ${entry.id}">${entry.description}</div>
-          <div class="cell ${entry.id}">${entry.code}</div>
-          <div class="cell ${entry.id}">￥${entry.reward}</div>
-          <div class="cell ${entry.id}">${entry.karma}</div>
-          <div class="cell ${entry.id}">${entry.risk}</div>
-        `);
-        row.append(removeButton);
-        $('#postings').append(row);
-        $('.posting-input#description').val('');
-        $('.posting-input#code').val('');
-        $('.posting-input#reward').val('');
-        $('.posting-input#karma').val('');
-        $('.posting-input#risk').val('');
+        if (!activeEntries.find((activeEntry) => entry.code === activeEntry)) {
+          const removeButton = $(`<input type="button" class=" ${entry.code}" id="remove" value="-"/>`).click(() => {
+            $(`.${entry.code}`).remove();
+            activeEntries.splice(activeEntries.findIndex((activeEntry) => entry.code === activeEntry), 1);
+          });
+          const row = $(`<div class="row"></div>`);
+          row.append(`
+            <div class="cell ${entry.code}">${entry.description}</div>
+            <div class="cell ${entry.code}">${entry.code}</div>
+            <div class="cell ${entry.code}">￥${entry.reward}</div>
+            <div class="cell ${entry.code}">${entry.karma}</div>
+            <div class="cell ${entry.code}">${entry.risk}</div>
+          `);
+          row.append(removeButton);
+          $('#postings').append(row);
+          activeEntries.push(entry.code);
+          $('.posting-input#description').val('');
+          $('.posting-input#code').val('');
+          $('.posting-input#reward').val('');
+          $('.posting-input#karma').val('');
+          $('.posting-input#risk').val('');
+        }
       }
 
       $('#add').click(() => {
@@ -260,7 +265,6 @@
           gapi.auth2.getAuthInstance().signIn();
         }
         const entry = {};
-        entry.id = uuid();
         entry.description = $('.posting-input#description').val();
         entry.code = $('.posting-input#code').val();
         entry.reward = $('.posting-input#reward').val();
