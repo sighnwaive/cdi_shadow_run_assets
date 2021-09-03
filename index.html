@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Job Menu</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css">
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Gruppo&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: #222222;
+        color: #7a2c75;
+        font-family: 'Share Tech Mono', monospace;
+      }
+      .title-wrap {
+        margin-bottom: 25px;
+        vertical-align: top;
+      }
+      .title-wrap > * {
+        display: inline-block;
+        vertical-align: top;
+      }
+      .title-left {
+        width: calc((100% - 708px)/2);
+        height: 104px;
+        border-bottom: 4px solid #d842cb;
+      }
+      .title-right {
+        width: calc((100% - 708px)/2);
+        height: 104px;
+        border-top: 4px solid #f9c80e;
+      }
+      .title {
+        background: #222222;
+        width: 700px;
+        height: 100px;
+        margin: auto;
+        text-align: center;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 72px;
+        border-top: 4px solid #f9c80e;
+        border-left: 4px solid #f9c80e;
+        border-top-left-radius: 50px;
+        border-bottom: 4px solid #d842cb;
+        border-right: 4px solid #d842cb;
+        border-bottom-right-radius: 50px;
+        
+      }
+      .grid {
+        width: 1280px;
+        margin: auto;
+      }
+      .grid .row {
+        color: #d842cb;
+        font-size: 0;
+        border-bottom: 1px solid #333333;
+      }
+      .grid .row > * {
+        font-size: 20px;
+        font-style: italic;
+      }
+      .grid .row:nth-child(odd) {
+        color: #a03b97;
+      }
+      .grid .row.header {
+        border-bottom: 1px solid #f9c80e;
+      }
+      .grid .row > *:nth-child(1) {
+        display: inline-block;
+        width: 730px;
+      }
+      .grid .row > *:nth-child(2) {
+        display: inline-block;
+        width: 100px;
+      }
+      .grid .row > *:nth-child(3) {
+        display: inline-block;
+        width: 250px;
+      }
+      .grid .row > *:nth-child(4) {
+        display: inline-block;
+        width: 92px;
+      }
+      .grid .row > *:nth-child(5) {
+        display: inline-block;
+        width: 92px;
+      }
+      .grid .row > *:nth-child(6) {
+        display: inline-block;
+        width: 16px;
+      }
+      .cell_header {
+        color: #f9c80e;
+        font-size: 26px;
+      }
+      .cell_header:last-of-type {
+        width: 16px;
+      }
+      .posting-input {
+        width: 100%;
+        background: #2a2a2a;
+        border: 1px solid #444444;
+        border-top: 1px solid #7a2c75;
+        border-bottom: 1px solid #7a2c75;
+        color: #d842cb;
+        font-size: 20px;
+      }
+      input#add {
+        width: 16px;
+        border: 1px solid #48e496;
+        background: #48e496;
+        color: #222222;
+      }
+      input#remove {
+        width: 16px;
+        border: 1px solid #9b362d;
+        background: #9b362d;
+        color: #222222;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="title-wrap">
+      <div class="title-left"></div><div class="title">Job Postings</div><div class="title-right"></div>
+    </div>
+
+    <div class="grid" id="postings">
+      <div class="row header">
+        <div class="cell_header">Description</div>
+        <div class="cell_header">Code</div>
+        <div class="cell_header">Reward</div>
+        <div class="cell_header">Karma</div>
+        <div class="cell_header">Risk</div>
+        <div class="cell_header"></div>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="row">
+        <div><input type="text" class="posting-input" id="description" /></div>
+        <div><input type="text" class="posting-input" id="code" /></div>
+        <div><input type="text" class="posting-input" id="reward" /></div>
+        <div><input type="text" class="posting-input" id="karma" /></div>
+        <div><input type="text" class="posting-input" id="risk" /></div>
+        <div><input type="button" id="add" value="+"/></div>
+      </div>
+    </div>
+  </body>
+
+  <script type="module">
+    import { v4 as uuid } from 'https://jspm.dev/uuid';
+    $(() => {
+      $('#add').click((event) => {
+        const entry = {};
+        entry.id = uuid();
+        entry.description = $('.posting-input#description').val();
+        entry.code = $('.posting-input#code').val();
+        entry.reward = $('.posting-input#reward').val();
+        entry.karma = $('.posting-input#karma').val();
+        entry.risk = $('.posting-input#risk').val();
+        const removeButton = $(`<input type="button" class=" ${entry.id}" id="remove" value="-"/>`).click(() => {
+          $(`.${entry.id}`).remove();
+        });
+        const row = $(`<div class="row"></div>`);
+        row.append(`
+          <div class="cell ${entry.id}">${entry.description}</div>
+          <div class="cell ${entry.id}">${entry.code}</div>
+          <div class="cell ${entry.id}">￥${entry.reward}</div>
+          <div class="cell ${entry.id}">${entry.karma}</div>
+          <div class="cell ${entry.id}">${entry.risk}</div>
+        `);
+        row.append(removeButton);
+        $('#postings').append(row);
+        $('.posting-input#description').val('');
+        $('.posting-input#code').val('');
+        $('.posting-input#reward').val('');
+        $('.posting-input#karma').val('');
+        $('.posting-input#risk').val('');
+      })
+    })
+  </script>
+</html>
