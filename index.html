@@ -207,8 +207,7 @@
           console.log(response);
           var range = response.result;
           if (range.values.length > 0) {
-            for (var i = 0; i < range.values.length; i++) {
-              var row = range.values[i];
+            range.values.forEach((row) => {
               const entry = {};
               entry.id = uuid();
               entry.description = row[0];
@@ -217,7 +216,7 @@
               entry.karma = row[3];
               entry.risk = row[4];
               addEntry(entry);
-            }
+            })
           } else {
             appendPre('No data found.');
           }
