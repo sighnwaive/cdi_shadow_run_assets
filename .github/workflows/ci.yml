@@ -1,11 +1,11 @@
-name: Build Vue
+name: Build Site
 on:
   push:
     branches: [ main ]
 jobs:
-  build_vue:
+  build_site:
     runs-on: ubuntu-latest
-    name: Build Vue
+    name: Build Site
     steps:
     - uses: actions/checkout@v2
     - name: Deploy to GH Page
