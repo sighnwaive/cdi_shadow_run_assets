@@ -207,11 +207,16 @@
           console.log(response);
           var range = response.result;
           if (range.values.length > 0) {
-            appendPre('Name, Major:');
             for (i = 0; i < range.values.length; i++) {
               var row = range.values[i];
-              // Print columns A and E, which correspond to indices 0 and 4.
-              appendPre(row[0] + ', ' + row[4]);
+              const entry = {};
+              entry.id = uuid();
+              entry.description = row[0];
+              entry.code = row[1];
+              entry.reward = row[2];
+              entry.karma = row[3];
+              entry.risk = row[4];
+              addEntry(entry);
             }
           } else {
             appendPre('No data found.');
@@ -221,17 +226,7 @@
         });
       }
 
-      $('#add').click((event) => {
-        if (!gapi.auth2.getAuthInstance().isSignedIn.get()) {
-          gapi.auth2.getAuthInstance().signIn();
-        }
-        const entry = {};
-        entry.id = uuid();
-        entry.description = $('.posting-input#description').val();
-        entry.code = $('.posting-input#code').val();
-        entry.reward = $('.posting-input#reward').val();
-        entry.karma = $('.posting-input#karma').val();
-        entry.risk = $('.posting-input#risk').val();
+      function addEntry(entry) {
         const removeButton = $(`<input type="button" class=" ${entry.id}" id="remove" value="-"/>`).click(() => {
           $(`.${entry.id}`).remove();
         });
@@ -250,6 +245,20 @@
         $('.posting-input#reward').val('');
         $('.posting-input#karma').val('');
         $('.posting-input#risk').val('');
+      }
+
+      $('#add').click(() => {
+        if (!gapi.auth2.getAuthInstance().isSignedIn.get()) {
+          gapi.auth2.getAuthInstance().signIn();
+        }
+        const entry = {};
+        entry.id = uuid();
+        entry.description = $('.posting-input#description').val();
+        entry.code = $('.posting-input#code').val();
+        entry.reward = $('.posting-input#reward').val();
+        entry.karma = $('.posting-input#karma').val();
+        entry.risk = $('.posting-input#risk').val();
+        addEntry(entry);
       })
       
       handleClientLoad();
